@@ -66,18 +66,18 @@ class lipEngine(object):
 				else:
 					applied_rule.append("r" + str(rule_id) + "m" + str(self.readRuleSet[rule_id]['module']))
 					
-				print(".....+++++")
-				print self.readRuleSet[rule_id]['module']
-				print self.readRuleSet[rule_id]
+				#~ print(".....+++++")
+				#~ print self.readRuleSet[rule_id]['module']
+				#~ print self.readRuleSet[rule_id]
 				out = self.execModule(self.readRuleSet[rule_id]['module'], data, self.readRuleSet[rule_id])
 
 				if OUTPUTSTEP:
 					print "\nRules applied: " + str(applied_rule)
 					
-					if out is not None:
-						print "Result: " + str(out)
-					else:
-						print "Result: " + str(data) + "\n"
+					if out is not None and str(out).strip() is not None:
+						print "[Result]: " + str(out)
+					#~ else:
+						#~ print "Result: " + str(data) + "\n"
 
 			if not OUTPUTSTEP:
 				print "Final Output: "
