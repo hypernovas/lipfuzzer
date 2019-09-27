@@ -1,5 +1,5 @@
-# LipFuzzer 1.0
-
+# LipFuzzer 1.1
+(using Python3)
 
 
 1. Where to download coreNLP tool used in NLTK:
@@ -10,15 +10,13 @@ Unzip it and remember the path
 
 edit the path in NLPEngine.py (for coreNLP)
 
-2. pip install inflect
+2. pip3 install inflect
 
-or python -m pip install inflect
-
-3. pip install pyenchant
+3. pip3 install pyenchant
 
 5. Download [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) zip file and extract to the **root folder**
 
-6. Directly run with python first.py
+6. Directly run with python3 first.py
 
 
 Note: 
