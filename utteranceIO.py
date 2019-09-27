@@ -36,7 +36,7 @@ class UtterancePack(object):
 		self.reading()
 		tmp = {key : {'ut': self.utterance, 'to': self.token, 'le': self.lemma, 'po': self.postag, 'de': self.dependency, 'ca': self.cato, 'ph': self.phoneme}}# utterance (voice commands, tokens, lemma of words, tags, dependency, category of the voice command, and phoneme)
 		if key in self.readUtteranceSet.keys():
-			print '[error-utterance]: key conflict.'
+			print('[error-utterance]: key conflict.')
 			exit()
 		else:
 			self.readUtteranceSet.update(tmp)

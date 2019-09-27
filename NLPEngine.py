@@ -46,7 +46,7 @@ class NLPEngine(object):
 	def depParse(self, inStr):
 		dependency_parser = StanfordDependencyParser(path_to_jar=self.path_to_jar, path_to_models_jar=self.path_to_models_jar)
 		result = dependency_parser.raw_parse(inStr)
-		dep = result.next()
+		dep = next(result)
 		return list(dep.triples())
 	#tokenization
 	def tokenize(self, inStr):

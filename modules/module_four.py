@@ -7,7 +7,7 @@ def module_four(self, data, rule):
 	match_ph = {}
 	MATCH = False
 	hit = 0
-	print data['ph']
+	print(data['ph'])
 	for key, val in data['ph'].iteritems():
 		#print("val is " + str(val))
 		if val == 'None':
@@ -24,7 +24,7 @@ def module_four(self, data, rule):
 				if MATCH == True:
 					#print str(match_ph)
 					for matchkey, vals in match_ph.iteritems():
-						print data['ph'][matchkey]
+						print(data['ph'][matchkey])
 						for y in range(phlen): 
 							data['ph'][matchkey][vals[0]-y] = rule['action'][vals[1]-y]
 							#print data['ph'][matchkey]

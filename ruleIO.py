@@ -23,7 +23,7 @@
 ## 7: shifting, tense shifting.. 
 
 
-
+from __future__ import print_function
 class rulePack(object):
 	def __init__(self):
 		self.rule_id = 0
@@ -35,12 +35,13 @@ class rulePack(object):
 	def readRule(self, path):
 		s = open(path).read()
 		self.readRuleSet = eval(s)
-		self.readRule_id = max(self.readRuleSet, key=self.readRuleSet.get)
+		#print(self.readRuleSet)
+		self.readRule_id = max(self.readRuleSet.keys())
 		
 	# Getters
 	def getRule(self, rule_id):
 		if rule_id not in self.ruleSet.keys():
-			print "Rule #" + str(rule_id) + " does not exist."
+			print("Rule #" + str(rule_id) + " does not exist.")
 			return {}
 
 		return self.ruleSet[rule_id]
@@ -51,7 +52,7 @@ class rulePack(object):
 	## For readRule
 	def getReadRule(self, rule_id):
 		if rule_id not in self.readRuleSet.keys():
-			print "Rule #" + str(rule_id) + " does not exist."
+			print("Rule #" + str(rule_id) + " does not exist.")
 			return {}
 
 		return self.readRuleSet[rule_id]
@@ -74,7 +75,7 @@ class rulePack(object):
 
 	def updateRule(self, rule_id, mod_id, match, action, name=""):	
 		if rule_id not in self.ruleSet.keys():
-			print "Rule #" + str(rule_id) + " does not exist."
+			print("Rule #" + str(rule_id) + " does not exist.")
 			return
 
 		self.ruleSet[rule_id] = {'name': name, 'module': mod_id, 'match': match, 'action': action}
@@ -86,7 +87,7 @@ class rulePack(object):
 
 	def updateReadRule(self, rule_id, mod_id, match, action, name=""):	
 		if rule_id not in self.readRuleSet.keys():
-			print "Rule #" + str(rule_id) + " does not exist."
+			print("Rule #" + str(rule_id) + " does not exist.")
 			return
 
 		self.readRuleSet[rule_id] = {'name': name, 'module': mod_id, 'match': match, 'action': action}
@@ -94,40 +95,40 @@ class rulePack(object):
 	# Print
 	def printRule(self, rule_id):
 		if rule_id not in self.ruleSet.keys():
-			print "Rule #" + str(rule_id) + " does not exist."
+			print("Rule #" + str(rule_id) + " does not exist.")
 			return
 
-		print "Rule #" + str(rule_id) + " = " + str(self.ruleSet[rule_id])
+		print("Rule #" + str(rule_id) + " = " + str(self.ruleSet[rule_id]))
 
 	def printRuleSet(self):
 		for rule_id in sorted(self.ruleSet):
 			if self.ruleSet[rule_id]['name'] != "":
-				print "Rule #" + str(rule_id) + " [" + self.ruleSet[rule_id]['name'] + "]:"
+				print("Rule #" + str(rule_id) + " [" + self.ruleSet[rule_id]['name'] + "]:")
 			else:
-				print "Rule #" + str(rule_id) + ":"
+				print("Rule #" + str(rule_id) + ":")
 
-			print "\tModule: " + str(self.ruleSet[rule_id]['module'])
-			print "\tmatch: " + str(self.ruleSet[rule_id]['match'])
-			print "\taction: " + str(self.ruleSet[rule_id]['action'])
+			print("\tModule: " + str(self.ruleSet[rule_id]['module']))
+			print("\tmatch: " + str(self.ruleSet[rule_id]['match']))
+			print("\taction: " + str(self.ruleSet[rule_id]['action']))
 
 	## For readRule
 	def printReadRule(self, rule_id):
 		if rule_id not in self.readRuleSet.keys():
-			print "Rule #" + str(rule_id) + " does not exist."
+			print("Rule #" + str(rule_id) + " does not exist.")
 			return
 
-		print "Rule #" + str(rule_id) + " = " + str(self.readRuleSet[rule_id])
+		print("Rule #" + str(rule_id) + " = " + str(self.readRuleSet[rule_id]))
 
 	def printReadRuleSet(self):
 		for rule_id in sorted(self.readRuleSet):
 			if self.readRuleSet[rule_id]['name'] != "":
-				print "Rule #" + str(rule_id) + " [" + self.readRuleSet[rule_id]['name'] + "]:"
+				print("Rule #" + str(rule_id) + " [" + self.readRuleSet[rule_id]['name'] + "]:")
 			else:
-				print "Rule #" + str(rule_id) + ":"
+				print("Rule #" + str(rule_id) + ":")
 
-			print "\tModule: " + str(self.readRuleSet[rule_id]['module'])
-			print "\tmatch: " + str(self.readRuleSet[rule_id]['match'])
-			print "\taction: " + str(self.readRuleSet[rule_id]['action'])
+			print("\tModule: " + str(self.readRuleSet[rule_id]['module']))
+			print("\tmatch: " + str(self.readRuleSet[rule_id]['match']))
+			print("\taction: " + str(self.readRuleSet[rule_id]['action']))
 	
 	#Generate rule file
 	def genRuleFile(self, path):
