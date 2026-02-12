@@ -23,10 +23,22 @@ from pathlib import Path
 @dataclass
 class Config:
     """Configuration data structure for LipFuzzer."""
+    # Deepgram TTS Configuration
     deepgram_api_key: str
     deepgram_model: str = "aura-asteria-en"
     deepgram_encoding: str = "mp3"
     deepgram_sample_rate: int = 24000
+    
+    # LLM Configuration
+    llm_provider: str = "litellm"
+    llm_model: str = "gpt-3.5-turbo"
+    llm_temperature: float = 0.7
+    llm_max_tokens: int = 1000
+    
+    # LLM API Keys (optional - depends on provider)
+    openai_api_key: Optional[str] = None
+    gemini_api_key: Optional[str] = None
+    anthropic_api_key: Optional[str] = None
     
 
 class ConfigLoader:
@@ -50,6 +62,7 @@ class ConfigLoader:
         """Load configuration from environment variables."""
         config = {}
         
+        # Deepgram TTS
         if 'DEEPGRAM_API_KEY' in os.environ:
             config['deepgram_api_key'] = os.environ['DEEPGRAM_API_KEY']
         
@@ -64,6 +77,35 @@ class ConfigLoader:
                 config['deepgram_sample_rate'] = int(os.environ['DEEPGRAM_SAMPLE_RATE'])
             except ValueError:
                 pass
+        
+        # LLM Configuration
+        if 'LLM_PROVIDER' in os.environ:
+            config['llm_provider'] = os.environ['LLM_PROVIDER']
+        
+        if 'LLM_MODEL' in os.environ:
+            config['llm_model'] = os.environ['LLM_MODEL']
+        
+        if 'LLM_TEMPERATURE' in os.environ:
+            try:
+                config['llm_temperature'] = float(os.environ['LLM_TEMPERATURE'])
+            except ValueError:
+                pass
+        
+        if 'LLM_MAX_TOKENS' in os.environ:
+            try:
+                config['llm_max_tokens'] = int(os.environ['LLM_MAX_TOKENS'])
+            except ValueError:
+                pass
+        
+        # LLM API Keys
+        if 'OPENAI_API_KEY' in os.environ:
+            config['openai_api_key'] = os.environ['OPENAI_API_KEY']
+        
+        if 'GEMINI_API_KEY' in os.environ:
+            config['gemini_api_key'] = os.environ['GEMINI_API_KEY']
+        
+        if 'ANTHROPIC_API_KEY' in os.environ:
+            config['anthropic_api_key'] = os.environ['ANTHROPIC_API_KEY']
         
         return config
     
@@ -89,6 +131,7 @@ class ConfigLoader:
                         key = key.strip()
                         value = value.strip().strip('"').strip("'")
                         
+                        # Deepgram TTS
                         if key == 'DEEPGRAM_API_KEY':
                             config['deepgram_api_key'] = value
                         elif key == 'DEEPGRAM_MODEL':
@@ -100,6 +143,28 @@ class ConfigLoader:
                                 config['deepgram_sample_rate'] = int(value)
                             except ValueError:
                                 pass
+                        # LLM Configuration
+                        elif key == 'LLM_PROVIDER':
+                            config['llm_provider'] = value
+                        elif key == 'LLM_MODEL':
+                            config['llm_model'] = value
+                        elif key == 'LLM_TEMPERATURE':
+                            try:
+                                config['llm_temperature'] = float(value)
+                            except ValueError:
+                                pass
+                        elif key == 'LLM_MAX_TOKENS':
+                            try:
+                                config['llm_max_tokens'] = int(value)
+                            except ValueError:
+                                pass
+                        # LLM API Keys
+                        elif key == 'OPENAI_API_KEY':
+                            config['openai_api_key'] = value
+                        elif key == 'GEMINI_API_KEY':
+                            config['gemini_api_key'] = value
+                        elif key == 'ANTHROPIC_API_KEY':
+                            config['anthropic_api_key'] = value
         except Exception as e:
             print(f"Warning: Error reading .env file: {e}")
         
@@ -121,6 +186,7 @@ class ConfigLoader:
                 if content.startswith('{'):
                     try:
                         data = json.loads(content)
+                        # Deepgram TTS
                         if 'DEEPGRAM_API_KEY' in data:
                             config['deepgram_api_key'] = data['DEEPGRAM_API_KEY']
                         if 'DEEPGRAM_MODEL' in data:
@@ -129,6 +195,22 @@ class ConfigLoader:
                             config['deepgram_encoding'] = data['DEEPGRAM_ENCODING']
                         if 'DEEPGRAM_SAMPLE_RATE' in data:
                             config['deepgram_sample_rate'] = int(data['DEEPGRAM_SAMPLE_RATE'])
+                        # LLM Configuration
+                        if 'LLM_PROVIDER' in data:
+                            config['llm_provider'] = data['LLM_PROVIDER']
+                        if 'LLM_MODEL' in data:
+                            config['llm_model'] = data['LLM_MODEL']
+                        if 'LLM_TEMPERATURE' in data:
+                            config['llm_temperature'] = float(data['LLM_TEMPERATURE'])
+                        if 'LLM_MAX_TOKENS' in data:
+                            config['llm_max_tokens'] = int(data['LLM_MAX_TOKENS'])
+                        # LLM API Keys
+                        if 'OPENAI_API_KEY' in data:
+                            config['openai_api_key'] = data['OPENAI_API_KEY']
+                        if 'GEMINI_API_KEY' in data:
+                            config['gemini_api_key'] = data['GEMINI_API_KEY']
+                        if 'ANTHROPIC_API_KEY' in data:
+                            config['anthropic_api_key'] = data['ANTHROPIC_API_KEY']
                         return config
                     except json.JSONDecodeError:
                         pass
@@ -144,6 +226,7 @@ class ConfigLoader:
                         key = key.strip()
                         value = value.strip().strip('"').strip("'")
                         
+                        # Deepgram TTS
                         if key == 'DEEPGRAM_API_KEY':
                             config['deepgram_api_key'] = value
                         elif key == 'DEEPGRAM_MODEL':
@@ -155,6 +238,28 @@ class ConfigLoader:
                                 config['deepgram_sample_rate'] = int(value)
                             except ValueError:
                                 pass
+                        # LLM Configuration
+                        elif key == 'LLM_PROVIDER':
+                            config['llm_provider'] = value
+                        elif key == 'LLM_MODEL':
+                            config['llm_model'] = value
+                        elif key == 'LLM_TEMPERATURE':
+                            try:
+                                config['llm_temperature'] = float(value)
+                            except ValueError:
+                                pass
+                        elif key == 'LLM_MAX_TOKENS':
+                            try:
+                                config['llm_max_tokens'] = int(value)
+                            except ValueError:
+                                pass
+                        # LLM API Keys
+                        elif key == 'OPENAI_API_KEY':
+                            config['openai_api_key'] = value
+                        elif key == 'GEMINI_API_KEY':
+                            config['gemini_api_key'] = value
+                        elif key == 'ANTHROPIC_API_KEY':
+                            config['anthropic_api_key'] = value
         except Exception as e:
             print(f"Warning: Error reading .secrets file: {e}")
         
@@ -166,7 +271,11 @@ class ConfigLoader:
         config_data = {
             'deepgram_model': 'aura-asteria-en',
             'deepgram_encoding': 'mp3',
-            'deepgram_sample_rate': 24000
+            'deepgram_sample_rate': 24000,
+            'llm_provider': 'litellm',
+            'llm_model': 'gpt-3.5-turbo',
+            'llm_temperature': 0.7,
+            'llm_max_tokens': 1000
         }
         
         # Load from .secrets (lowest priority)

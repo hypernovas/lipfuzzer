@@ -101,7 +101,7 @@ tts.synthesize('Hello world', 'output.mp3')
 No changes needed! The LipEngine now automatically uses Deepgram TTS:
 
 ```python
-from LipEngine import lipEngine
+from lip_engine import lipEngine
 
 l = lipEngine()  # TTS client auto-initialized
 l.loadRule("testRule.txt")

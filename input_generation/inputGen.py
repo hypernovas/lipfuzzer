@@ -1,4 +1,4 @@
-from utteranceIO import *
+from utterance_io import *
 
 p = UtterancePack()
 p.filePath = 'testInput.txt'

@@ -1,4 +1,4 @@
-from LipEngine import *
+from lip_engine import *
 
 l = lipEngine()
 l.loadRule("testRule.txt")

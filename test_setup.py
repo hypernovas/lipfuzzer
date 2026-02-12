@@ -21,8 +21,8 @@ def test_imports():
         'nltk': False,
         'config': False,
         'tts.deepgram_tts': False,
-        'LipEngine': False,
-        'NLPEngine': False
+        'lip_engine': False,
+        'nlp_engine': False
     }
     
     for module in tests.keys():
@@ -37,10 +37,10 @@ def test_imports():
                 from config import get_config
             elif module == 'tts.deepgram_tts':
                 from tts.deepgram_tts import DeepgramTTS
-            elif module == 'LipEngine':
-                from LipEngine import lipEngine
-            elif module == 'NLPEngine':
-                from NLPEngine import NLPEngine
+            elif module == 'lip_engine':
+                from lip_engine import lipEngine
+            elif module == 'nlp_engine':
+                from nlp_engine import NLPEngine
             tests[module] = True
             print(f"✓ {module}")
         except ImportError as e:
@@ -104,7 +104,7 @@ def test_stanford_corenlp():
     print("=" * 60)
     
     try:
-        from NLPEngine import NLPEngine
+        from nlp_engine import NLPEngine
         nlp = NLPEngine()
         
         # Check if JAR files exist
@@ -134,7 +134,7 @@ def test_lipengine():
     print("=" * 60)
     
     try:
-        from LipEngine import lipEngine
+        from lip_engine import lipEngine
         
         engine = lipEngine()
         print(f"✓ LipEngine initialized")

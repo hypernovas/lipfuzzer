@@ -1,5 +1,5 @@
 import nltk
-from utteranceIO import *
+from utterance_io import *
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.parse.stanford import StanfordDependencyParser
 from nltk.corpus.reader.cmudict import *

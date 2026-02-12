@@ -1,7 +1,17 @@
 # LipFuzzer Dependencies
-# Modern TTS and configuration
+
+# TTS and configuration
 deepgram-sdk>=3.0.0
 python-dotenv>=1.0.0
+
+# LLM providers
+litellm>=1.0.0
+openai>=1.0.0
+google-generativeai>=0.3.0
+
+# Prompt management
+pyyaml>=6.0
+jinja2>=3.1.0
 
 # NLP and linguistic processing
 nltk>=3.8.0
