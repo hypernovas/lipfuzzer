@@ -1,0 +1,16 @@
+# LipFuzzer Dependencies
+# Modern TTS and configuration
+deepgram-sdk>=3.0.0
+python-dotenv>=1.0.0
+
+# NLP and linguistic processing
+nltk>=3.8.0
+inflect>=7.0.0
+pyenchant>=3.2.0
+
+# Stanford CoreNLP (download separately from https://stanfordnlp.github.io/CoreNLP/)
+# Note: The JAR files need to be downloaded and extracted to the project root
+
+# Optional: For better performance and additional features
+# requests>=2.31.0
+# aiohttp>=3.9.0  # For async TTS support in future

@@ -8,12 +8,29 @@ from NLPEngine import *
 sys.path.append('./modules/')
 from modules import *
 
+# Import TTS module for speech synthesis
+try:
+    from tts.deepgram_tts import DeepgramTTS
+    TTS_AVAILABLE = True
+except ImportError:
+    TTS_AVAILABLE = False
+    print("Warning: TTS module not available. Install deepgram-sdk for speech synthesis.")
+
 
 class lipEngine(object):
 	def __init__(self, outPath="out.txt"):
 		self.readRuleSet = {}
 		self.outPath = outPath
 		self.supportedModule = [0, 1, 2, 3, 4, 5, 6, 7]
+		self.tts_client = None
+		
+		# Initialize TTS client if available
+		if TTS_AVAILABLE:
+			try:
+				self.tts_client = DeepgramTTS()
+				print("[lipEngine] TTS client initialized")
+			except Exception as e:
+				print(f"[lipEngine] Failed to initialize TTS: {e}")
 		
 	def loadRule(self, path):
 		print("\n[lipEngine] Loading rules")
@@ -93,6 +110,54 @@ class lipEngine(object):
 		print(mod_name)
 		exec("out = " + mod_name + "." + mod_name + "(self, data, rule)")
 		return out
+	
+	def synthesize_speech(self, text, output_path, voice=None):
+		"""
+		Synthesize speech from text using TTS client.
+		
+		Args:
+			text: Text to synthesize
+			output_path: Path to save audio file
+			voice: Optional voice model override
+			
+		Returns:
+			True if successful, False otherwise
+		"""
+		if not self.tts_client:
+			print("[lipEngine] TTS client not available")
+			return False
+		
+		try:
+			return self.tts_client.synthesize(text, output_path, voice)
+		except Exception as e:
+			print(f"[lipEngine] Speech synthesis failed: {e}")
+			return False
+	
+	def verify_utterance(self, utterance_text, output_audio_path=None):
+		"""
+		Verify an utterance by synthesizing it to speech.
+		
+		Args:
+			utterance_text: The utterance text to verify
+			output_audio_path: Optional path to save audio (auto-generated if None)
+			
+		Returns:
+			Path to generated audio file if successful, None otherwise
+		"""
+		if output_audio_path is None:
+			# Auto-generate output path
+			import os
+			import time
+			audio_dir = "verification_audio"
+			os.makedirs(audio_dir, exist_ok=True)
+			timestamp = int(time.time() * 1000)
+			output_audio_path = os.path.join(audio_dir, f"verify_{timestamp}.mp3")
+		
+		if self.synthesize_speech(utterance_text, output_audio_path):
+			print(f"[lipEngine] Verification audio saved: {output_audio_path}")
+			return output_audio_path
+		else:
+			return None
 
 # ~ l = lipEngine()
 # ~ l.loadRule("ruleFile.txt")

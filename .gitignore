@@ -1,0 +1,59 @@
+# Environment and secrets
+.env
+.secrets
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Audio files
+*.mp3
+*.wav
+*.flac
+audioUsing*/
+gaudioUsing*/
+verification_audio/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Stanford CoreNLP
+stanford-corenlp-full-*/
+
+# Batch files
+*.bat
+
+# Logs
+*.log
