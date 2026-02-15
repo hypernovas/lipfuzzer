@@ -1,16 +1,25 @@
-# Fuzzing Engine
-from __future__ import print_function
-import inflect, sys
-from rule_io import *
-from utterance_io import *
-from nlp_engine import *
+"""Fuzzing Engine for Voice Assistant security testing."""
 
-sys.path.append('./modules/')
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from typing import Any
+
+# Add parent directory to path to import modules
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from lipfuzzer.io.rule_io import rulePack, RuleDict
+from lipfuzzer.io.utterance_io import UtterancePack
+from lipfuzzer.nlp_engine import NLPEngine
+
+sys.path.append("./modules/")
 from modules import *
 
 # Import TTS module for speech synthesis
 try:
     from tts.deepgram_tts import DeepgramTTS
+
     TTS_AVAILABLE = True
 except ImportError:
     TTS_AVAILABLE = False
@@ -20,71 +29,94 @@ except ImportError:
 try:
     from llm import create_llm_client
     from llm.prompts import PromptManager
+
     LLM_AVAILABLE = True
 except ImportError:
     LLM_AVAILABLE = False
     print("Warning: LLM module not available. Install LLM dependencies for command generation.")
 
 
-class lipEngine(object):
-	def __init__(self, outPath="out.txt"):
-		self.readRuleSet = {}
-		self.outPath = outPath
-		self.supportedModule = [0, 1, 2, 3, 4, 5, 6, 7]
-		self.tts_client = None
-		self.llm_client = None
-		self.prompt_manager = None
-		
-		# Initialize TTS client if available
-		if TTS_AVAILABLE:
-			try:
-				self.tts_client = DeepgramTTS()
-				print("[lipEngine] TTS client initialized")
-			except Exception as e:
-				print(f"[lipEngine] Failed to initialize TTS: {e}")
-		
-		# Initialize LLM client if available
-		if LLM_AVAILABLE:
-			try:
-				self.llm_client = create_llm_client()
-				self.prompt_manager = PromptManager()
-				print("[lipEngine] LLM client initialized")
-			except Exception as e:
-				print(f"[lipEngine] Failed to initialize LLM: {e}")
-		
-	def loadRule(self, path):
-		print("\n[lipEngine] Loading rules")
+class lipEngine:
+    """Main fuzzing engine for voice assistant security testing."""
 
-		r = rulePack()
-		r.readRule(path)
-		self.readRuleSet = r.getReadRuleSet()
+    def __init__(self, outPath: str = "out.txt") -> None:
+        """Initialize the fuzzing engine.
 
-		for rule in self.readRuleSet.values():
-			if rule['module'] not in self.supportedModule:
-				print("Module " + str(rule['module']) + " not suppported")
-				continue
-	
-	def loadData(self, path):
-		print("[lipEngine] Loading data\n")
+        Args:
+            outPath: Output file path for fuzzing results
+        """
+        self.readRuleSet: dict[str, RuleDict] = {}
+        self.outPath = outPath
+        self.supportedModule = [0, 1, 2, 3, 4, 5, 6, 7]
+        self.tts_client: DeepgramTTS | None = None
+        self.llm_client: Any | None = None
+        self.prompt_manager: PromptManager | None = None
 
-		self.uu = UtterancePack()
-		self.uu.filePath = path
-		self.uu.reading()
-		self.nlp = NLPEngine()
-		for key, value in self.uu.readUtteranceSet.items():
-			print('===============>> ' + str(value['ut']))
-			value['to'] = self.nlp.tokenize(value['ut'])
-			value['de'] = self.nlp.depParse(value['ut'])
-			value['ph'] = {}
-			value['le'] = {}
-			ind = 0
-			for x in value['to']:
-				value['le'][ind] = self.nlp.lemmatization(x)
-				value['ph'][ind] = self.nlp.phonimizer(x)
-				ind += 1
-			print(str(value))
+        # Initialize TTS client if available
+        if TTS_AVAILABLE:
+            try:
+                self.tts_client = DeepgramTTS()
+                print("[lipEngine] TTS client initialized")
+            except Exception as e:
+                print(f"[lipEngine] Failed to initialize TTS: {e}")
 
-	def fuzz(self, rules=[], INHERITCHANGE=False, OUTPUTSTEP=False):
+        # Initialize LLM client if available
+        if LLM_AVAILABLE:
+            try:
+                self.llm_client = create_llm_client()
+                self.prompt_manager = PromptManager()
+                print("[lipEngine] LLM client initialized")
+            except Exception as e:
+                print(f"[lipEngine] Failed to initialize LLM: {e}")
+
+    def loadRule(self, path: str) -> None:
+        """Load fuzzing rules from file.
+
+        Args:
+            path: Path to rules file
+        """
+        print("\n[lipEngine] Loading rules")
+
+        r = rulePack()
+        r.readRule(path)
+        self.readRuleSet = r.getReadRuleSet()
+
+        for rule in self.readRuleSet.values():
+            if rule["module"] not in self.supportedModule:
+                print(f"Module {rule['module']} not supported")
+
+    def loadData(self, path: str) -> None:
+        """Load test data from file.
+
+        Args:
+            path: Path to data file
+        """
+        print("[lipEngine] Loading data\n")
+
+        self.uu = UtterancePack()
+        self.uu.filePath = path
+        self.uu.reading()
+        self.nlp = NLPEngine()
+
+        for key, value in self.uu.readUtteranceSet.items():
+            print(f"===============>> {value['ut']}")
+            value["to"] = self.nlp.tokenize(value["ut"])
+            value["de"] = self.nlp.depParse(value["ut"])
+            value["ph"] = {}
+            value["le"] = {}
+
+            for ind, token in enumerate(value["to"]):
+                value["le"][ind] = self.nlp.lemmatization(token)
+                value["ph"][ind] = self.nlp.phonimizer(token)
+
+            print(str(value))
+
+    def fuzz(
+        self,
+        rules: list[int] | None = None,
+        INHERITCHANGE: bool = False,
+        OUTPUTSTEP: bool = False,
+    ) -> None:
 		print("\n[lipEngine] Fuzzing...\n")
 
 		if len(rules) == 0:
@@ -383,6 +415,6 @@ class lipEngine(object):
 			return []
 
 # ~ l = lipEngine()
-# ~ l.loadRule("ruleFile.txt")
-# ~ l.loadData("datashort.txt")
+# ~ l.loadRule("data/ruleFile.txt")
+# ~ l.loadData("data/datashort.txt")
 # ~l.fuzz(OUTPUTSTEP=True)

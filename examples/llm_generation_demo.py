@@ -14,7 +14,7 @@ import os
 # Add parent directory to path to import lip_engine
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from lip_engine import lipEngine
+from lipfuzzer import lipEngine
 
 
 def demo_seed_generation(engine):

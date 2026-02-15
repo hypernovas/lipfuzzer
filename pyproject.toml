@@ -1,0 +1,178 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lipfuzzer"
+version = "2.0.0"
+description = "Modern linguistic-model-guided fuzzing tool for Voice Assistant security testing"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+authors = [
+    {name = "Yangyong Zhang", email = "yangyong@example.com"}
+]
+maintainers = [
+    {name = "Yangyong Zhang", email = "yangyong@example.com"}
+]
+keywords = [
+    "fuzzing",
+    "security",
+    "voice-assistant",
+    "nlp",
+    "testing",
+    "alexa",
+    "siri",
+    "google-assistant",
+    "speech-recognition",
+    "llm"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "deepgram-sdk>=3.0.0",
+    "python-dotenv>=1.0.0",
+    "litellm>=1.0.0",
+    "openai>=1.0.0",
+    "google-generativeai>=0.3.0",
+    "pyyaml>=6.0",
+    "jinja2>=3.1.0",
+    "nltk>=3.8.0",
+    "inflect>=7.0.0",
+    "pyenchant>=3.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+]
+async = [
+    "aiohttp>=3.9.0",
+    "asyncio>=3.4.3",
+]
+
+[project.urls]
+Homepage = "https://github.com/yangyong/lipfuzzer"
+Documentation = "https://github.com/yangyong/lipfuzzer#readme"
+Repository = "https://github.com/yangyong/lipfuzzer"
+Issues = "https://github.com/yangyong/lipfuzzer/issues"
+Changelog = "https://github.com/yangyong/lipfuzzer/blob/master/docs/CHANGELOG.md"
+
+[project.scripts]
+lipfuzzer = "lipfuzzer.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lipfuzzer"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+
+[tool.uv.sources]
+
+[tool.black]
+line-length = 120
+target-version = ['py313']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | stanford-corenlp-*
+)/
+'''
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov=src --cov-report=term-missing --cov-report=html"
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+follow_imports = "normal"
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/test_*.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+]

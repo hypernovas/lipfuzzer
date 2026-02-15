@@ -1,4 +1,4 @@
-from rule_io import *
+from lipfuzzer.io import rulePack
 
 r = rulePack()
 # firt match then action
@@ -11,4 +11,4 @@ r.addRule(5, 'post', 'remove',  'mod5')
 r.addRule(6, 'replace', 'all',  'mod6')
 #~ r.addRule(7, 'all', 'un',  'mod7')
 
-r.genRuleFile('testRule.txt')
+r.genRuleFile('../data/testRule.txt')

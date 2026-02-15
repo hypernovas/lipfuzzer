@@ -24,6 +24,17 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# uv
+uv.lock
+.python-version
 
 # Audio files
 *.mp3
@@ -37,6 +48,8 @@ verification_audio/
 .pytest_cache/
 .coverage
 htmlcov/
+.tox/
+.hypothesis/
 
 # IDE
 .vscode/
@@ -57,3 +70,11 @@ stanford-corenlp-full-*/
 
 # Logs
 *.log
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff
+.ruff_cache/

@@ -1,6 +1,6 @@
-from lip_engine import *
+from lipfuzzer import lipEngine
 
 l = lipEngine()
-l.loadRule("testRule.txt")
-l.loadData("testInput.txt")
+l.loadRule("data/testRule.txt")
+l.loadData("data/testInput.txt")
 l.fuzz(OUTPUTSTEP=True)

@@ -1,5 +1,14 @@
 # LipFuzzer 2.0
+
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Research](https://img.shields.io/badge/NDSS-2019-red.svg)](https://par.nsf.gov/servlets/purl/10104003)
+[![uv](https://img.shields.io/badge/uv-enabled-blueviolet.svg)](https://github.com/astral-sh/uv)
+[![PyPI](https://img.shields.io/badge/PyPI-ready-green.svg)](https://pypi.org/)
+
 Modern linguistic-model-guided fuzzing tool for Voice Assistant security testing.
+
+> **🚀 Now UV-first!** Fast installation and dependency management with [uv](https://github.com/astral-sh/uv)
 
 ## Overview
 
@@ -14,9 +23,23 @@ LipFuzzer is a research tool designed to systematically discover speech misinter
 - 🧪 Automated verification pipeline
 - 🎨 Flexible prompt templates for domain-specific testing
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Usage Examples](#usage-examples)
+- [Module System](#module-system)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [Research Paper](#research-paper)
+- [License](#license)
+
 ## Prerequisites
 
-- Python 3.6 or higher
+- Python 3.13 or higher
+- [uv](https://github.com/astral-sh/uv) (recommended) or pip
+- [direnv](https://direnv.net/) (optional, for automatic environment setup)
 - Deepgram API key ([Get one here](https://console.deepgram.com/))
 - LLM API key (at least one):
   - OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
@@ -25,13 +48,44 @@ LipFuzzer is a research tool designed to systematically discover speech misinter
 
 ## Quick Start
 
-### 1. Install Dependencies
+### 1. Install with uv (Recommended)
+
+[uv](https://github.com/astral-sh/uv) is a fast Python package installer and resolver.
+
+```bash
+# Install uv if you haven't already
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Clone and install LipFuzzer
+git clone https://github.com/yangyong/lipfuzzer.git
+cd lipfuzzer
+
+# Install with Python 3.13
+uv sync
+
+# Optional: Set up direnv for automatic environment activation
+direnv allow
+```
+
+The project is configured to use Python 3.13 automatically via:
+- `.python-version` file (for uv)
+- `.envrc` file (for direnv)
+
+### 1b. Install with pip
+
+```bash
+pip install lipfuzzer
+```
+
+### 2. Install Dependencies (Traditional Method)
+
+If installing from source without uv:
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-### 2. Download Stanford CoreNLP
+### 3. Download Stanford CoreNLP
 
 Download [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) (English models) and extract to the **root folder**.
 
@@ -46,7 +100,7 @@ Update the path in `NLPEngine.py` if needed:
 self.path_to_jar = './stanford-corenlp-full-YYYY-MM-DD/stanford-corenlp-X.X.X.jar'
 ```
 
-### 3. Configure API Keys
+### 4. Configure API Keys
 
 Choose **one** of the following methods (checked in order of priority):
 
@@ -96,7 +150,25 @@ Or use JSON format:
 }
 ```
 
-### 4. Run LipFuzzer
+### 5. Run LipFuzzer
+
+#### Using the CLI (if installed via pip/uv)
+
+```bash
+# Show help
+lipfuzzer --help
+
+# Run basic fuzzing
+lipfuzzer fuzz --rules data/testRule.txt --input data/testInput.txt
+
+# Generate seed commands
+lipfuzzer generate seeds --assistant Alexa --domain smart_home --count 10
+
+# Check configuration
+lipfuzzer config --check
+```
+
+#### Using Python Script
 
 ```bash
 python3 first.py
@@ -157,13 +229,31 @@ python3 first.py
 
 ## Usage Examples
 
-### Basic Fuzzing
+### Using the CLI
+
+```bash
+# Basic fuzzing
+lipfuzzer fuzz --rules data/testRule.txt --input data/testInput.txt --output results.txt
+
+# Generate seed commands
+lipfuzzer generate seeds --assistant Alexa --domain smart_home --count 10 --output seeds.txt
+
+# Generate mutations
+lipfuzzer generate mutations --command "Alexa, open crypto wallet" --type phonetic --count 5
+
+# Check configuration
+lipfuzzer config --check
+```
+
+### Using Python API
+
+#### Basic Fuzzing
 ```python
-from lip_engine import lipEngine
+from lipfuzzer import lipEngine
 
 l = lipEngine()
-l.loadRule("testRule.txt")
-l.loadData("testInput.txt")
+l.loadRule("data/testRule.txt")
+l.loadData("data/testInput.txt")
 l.fuzz(OUTPUTSTEP=True)
 ```
 
@@ -171,7 +261,7 @@ l.fuzz(OUTPUTSTEP=True)
 
 #### Generate Seed Commands
 ```python
-from lip_engine import lipEngine
+from src.lip_engine import lipEngine
 
 engine = lipEngine()
 
@@ -291,33 +381,64 @@ If you're upgrading from LipFuzzer 1.x with AWS Polly:
 
 ```
 lipfuzzer/
+├── src/                   # Source code
+│   ├── __init__.py        # Package initialization
+│   ├── lip_engine.py      # Main fuzzing engine
+│   ├── nlp_engine.py      # NLP preprocessing
+│   └── io/                # I/O modules
+│       ├── __init__.py
+│       ├── rule_io.py     # Rule file I/O
+│       ├── utterance_io.py  # Utterance data I/O
+│       └── table_io.py    # Table data I/O
 ├── config.py              # Configuration loader
-├── lip_engine.py          # Main fuzzing engine
-├── nlp_engine.py          # NLP preprocessing
-├── llm/                  # LLM module (NEW)
-│   ├── base.py          # LLM interface
+├── first.py               # Basic usage example
+├── llm/                   # LLM module
+│   ├── base.py            # LLM interface
 │   ├── litellm_provider.py  # LiteLLM (unified)
-│   ├── openai_llm.py    # OpenAI provider
-│   ├── gemini_llm.py    # Gemini provider
-│   ├── prompts.py       # Prompt management
-│   └── templates/       # Prompt templates
+│   ├── openai_llm.py      # OpenAI provider
+│   ├── gemini_llm.py      # Gemini provider
+│   ├── prompts.py         # Prompt management
+│   └── templates/         # Prompt templates
 │       ├── seed_generation.yaml
 │       ├── mutation_generation.yaml
 │       ├── adversarial_generation.yaml
 │       ├── smart_home_commands.yaml
 │       └── banking_commands.yaml
-├── tts/                  # TTS module
-│   ├── base.py          # TTS interface
-│   └── deepgram_tts.py  # Deepgram implementation
-├── modules/             # Mutation modules
-│   ├── module_zero.py   # Word swapping
-│   ├── module_one.py    # Word addition
-│   └── ...
-├── examples/            # Example scripts (NEW)
+├── tts/                   # TTS module
+│   ├── base.py            # TTS interface
+│   └── deepgram_tts.py    # Deepgram implementation
+├── modules/               # Mutation modules
+│   ├── module_zero.py     # Word swapping
+│   ├── module_one.py      # Word addition
+│   └── ...                # Additional modules
+├── examples/              # Usage examples
 │   └── llm_generation_demo.py
-├── test/                # Test utilities
-│   └── audio/           # Audio generation
-└── input_generation/    # Input generators
+├── tests/                 # Test files
+│   └── test_setup.py      # Setup verification
+├── test/                  # Legacy test utilities
+│   └── audio/             # Audio generation
+├── input_generation/      # Input generators
+│   └── inputGen.py
+├── rule_generation/       # Rule generators
+│   └── ruleGenExample.py
+├── data/                  # Test data files
+│   ├── testInput.txt      # Sample input data
+│   ├── testRule.txt       # Sample rules
+│   └── datashort.txt      # Short test data
+├── docs/                  # Documentation
+│   ├── REFACTORING_SUMMARY.md
+│   ├── LLM_INTEGRATION.md
+│   ├── MIGRATION.md
+│   ├── CHANGELOG.md
+│   └── SETUP_MULTIPLE_GITHUB_ACCOUNTS.md
+├── scripts/               # Utility scripts
+│   ├── PUSH_STEPS.sh
+│   └── quick_setup_github.sh
+├── .env.example           # Example environment file
+├── requirements.txt       # Python dependencies
+├── LICENSE                # MIT License
+├── CONTRIBUTING.md        # Contribution guidelines
+└── README.md              # This file
 
 ```
 
@@ -439,5 +560,31 @@ Make sure you have the correct API key set for your chosen provider.
 For issues and questions:
 - Open an issue on GitHub
 - Check the research paper for methodology details
-- Review test files for usage examples
+- Review examples in `examples/` directory
+- Read additional documentation in `docs/`
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
+- How to set up your development environment
+- Coding standards and style guide
+- Pull request process
+- Areas where contributions are needed
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+**Research and Educational Use Notice**: This software is provided for research and educational purposes. Users are responsible for ensuring compliance with all applicable laws and regulations. See LICENSE for full details.
+
+## Acknowledgments
+
+- Original research by Zhang et al. (NDSS 2019)
+- Built with [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/)
+- Powered by [Deepgram TTS](https://deepgram.com/)
+- LLM integration via [LiteLLM](https://docs.litellm.ai/)
+
+---
+
+**⚠️ Responsible Use**: This tool is designed for security research and testing. Please use it responsibly and ethically.
 

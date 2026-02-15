@@ -1,7 +1,7 @@
-from utterance_io import *
+from lipfuzzer.io import UtterancePack
 
 p = UtterancePack()
-p.filePath = 'testInput.txt'
+p.filePath = '../data/testInput.txt'
 p.initilize()
 p.utterance = 'Alexa, talk about story store'
 p.update((0,0,1))
